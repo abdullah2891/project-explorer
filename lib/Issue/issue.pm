@@ -5,7 +5,7 @@ use warnings;
 use Data::Dumper;
 use DBI;
 
-our @EXPORT_OK = qw(connect getIssue);
+our @EXPORT_OK = qw(connect getIssue addIssue);
  
 
 sub connect {
@@ -32,13 +32,38 @@ sub getIssue {
     my $issues = $sth->fetchrow_hashref(); 
     
     $sth->finish;
-    
+
     return +{STATUS => "ERROR RETURNING ARRAYS  $sth->errstr()"} unless ('HASH' eq ref $issues); 
     
     return +{STATUS => 'OK' , "Issue" => $issues}; 
     
 }
 
+sub addIssue{
+    my ($self, %arg) = @_ ; 
+    
+    
+    
+    my $dbh = $arg{dbh};
+
+    return {STATUS=>"ERROR:MISSING DATABASE HANDLER"} unless (defined $dbh);
+    
+    my $sth = $dbh->prepare("INSERT INTO Issue (title, owner, description, status) VALUES (?,?,?,?)"); 
+
+    $sth->execute($arg{title},$arg{owner}, $arg{description}, $arg{status}) 
+                             or return +{STATUS =>"Execution failed : $sth->errstr()"};
+    
+    $sth->finish; 
+    
+
+    return +{STATUS => 'OK' , "Issue" => "Issue created successfully"} ; 
+}
+
+sub updateIssue{
+    my ($self, $dbh ,$fields) = @_ ; 
+    
+    return 1; 
+}
 
 
 1;
