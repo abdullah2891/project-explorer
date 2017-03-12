@@ -5,7 +5,7 @@ use warnings;
 use Data::Dumper;
 use DBI;
 
-our @EXPORT_OK = qw(connect getIssue addIssue);
+our @EXPORT_OK = qw(connect getIssue addIssue updateStatus);
  
 
 sub connect {
@@ -24,7 +24,7 @@ sub connect {
 
 sub getIssue {
     my ($self, $dbh) = @_ ;
-    
+    # my $dbh = shift;
 
     return +{STATUS=>"ERROR:MISSING DATABASE HANDLER"} unless (defined $dbh);
     
@@ -34,12 +34,11 @@ sub getIssue {
     
     my $issues = {}; 
     my $ref;
+
     while($ref = $sth->fetchrow_hashref() ){
         $issues->{ $ref->{ID} } = $ref;
     }
     
-    print Dumper($issues);
-
     $sth->finish;
     $dbh->disconnect();
     
@@ -51,8 +50,6 @@ sub getIssue {
 
 sub addIssue{
     my ($self, %arg) = @_ ; 
-    
-    
     
     my $dbh = $arg{dbh};
 
@@ -69,11 +66,22 @@ sub addIssue{
     return +{STATUS => 'OK' , "Issue" => "Issue created successfully"} ; 
 }
 
-sub updateIssue{
-    my ($self, $dbh ,$fields) = @_ ; 
+sub updateStatus{
+    my ($self, %arg) = @_ ; 
     
-    return 1; 
-}
+    my $dbh = $arg{dbh};
 
-
-1;
+    return +{STATUS=>"ERROR:MISSING DATABASE HANDLER"} unless (defined $dbh);
+    
+    my $sth = $dbh->prepare("UPDATE Issue SET `status` = ? where ID = ?"); 
+    
+    $sth->execute( $arg{status}, $arg{ID} )
+                    or return +{STATUS =>"Execution failed : $sth->errstr()"};
+    
+    
+    $sth->finish; 
+    # not sure I have to disconnect from database handler
+    $dbh->disconnect();
+    
+    return +{STATUS => 'OK' , "Issue" => "Issue updated successfully"}; 
+};

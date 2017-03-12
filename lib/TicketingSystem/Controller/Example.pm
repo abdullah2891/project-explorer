@@ -29,13 +29,23 @@ sub post_issue{
   
   my $request = $self->req->json;
   
-  my $dbh = Issue::issue->connect('ticketSystem'); 
+  $request->{dbh} = Issue::issue->connect('ticketSystem'); 
 
-  $request->{dbh} = $dbh;
-  
   my $issue_status = Issue::issue->addIssue(%$request);
  
   $self->render(json=>{status=>'OK',response=>"Issue Created successfully " });
+}
+
+sub update_status{
+  my $self = shift; 
+  
+  my $request = $self->req->json;
+  
+  $request->{dbh} = Issue::issue->connect('ticketSystem'); 
+  
+  my $issue_status = Issue::issue->updateStatus(%$request);
+
+  $self->render(json=>{status=>'OK',response=>"Issue is updated successfully"});  
 }
 
 1;
