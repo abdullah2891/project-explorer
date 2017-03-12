@@ -25,15 +25,25 @@ sub connect {
 sub getIssue {
     my ($self, $dbh) = @_ ;
     
+
+    return +{STATUS=>"ERROR:MISSING DATABASE HANDLER"} unless (defined $dbh);
+    
     my $sth = $dbh->prepare("SELECT * FROM Issue"); 
     
     $sth->execute() or die +{STATUS =>"execution failed : $sth->errstr()"}; 
     
-    my $issues = $sth->fetchrow_hashref(); 
+    my $issues = {}; 
+    my $ref;
+    while($ref = $sth->fetchrow_hashref() ){
+        $issues->{ $ref->{ID} } = $ref;
+    }
     
-    $sth->finish;
+    print Dumper($issues);
 
-    return +{STATUS => "ERROR RETURNING ARRAYS  $sth->errstr()"} unless ('HASH' eq ref $issues); 
+    $sth->finish;
+    $dbh->disconnect();
+    
+    return +{STATUS => "ERROR RETURNING HASH )"} unless ('HASH' eq ref $issues); 
     
     return +{STATUS => 'OK' , "Issue" => $issues}; 
     
@@ -54,7 +64,7 @@ sub addIssue{
                              or return +{STATUS =>"Execution failed : $sth->errstr()"};
     
     $sth->finish; 
-    
+    $dbh->disconnect();
 
     return +{STATUS => 'OK' , "Issue" => "Issue created successfully"} ; 
 }
