@@ -19,7 +19,7 @@ sub get_issue {
   my $dbh = Issue::issue->connect('ticketSystem');
   
   my $issue = Issue::issue->getIssue($dbh); 
-  
+  $self->res->headers->header('Access-Control-Allow-Origin' => '*');
   $self->render(json=>{status=>'OK', response=>$issue});
 
 }
@@ -32,7 +32,7 @@ sub post_issue{
   $request->{dbh} = Issue::issue->connect('ticketSystem'); 
 
   my $issue_status = Issue::issue->addIssue(%$request);
- 
+  $self->res->headers->header('Access-Control-Allow-Origin' => '*');
   $self->render(json=>{status=>'OK',response=>"Issue Created successfully " });
 }
 
@@ -44,7 +44,7 @@ sub update_status{
   $request->{dbh} = Issue::issue->connect('ticketSystem'); 
   
   my $issue_status = Issue::issue->updateStatus(%$request);
-
+  $self->res->headers->header('Access-Control-Allow-Origin' => '*');
   $self->render(json=>{status=>'OK',response=>"Issue is updated successfully"});  
 }
 
