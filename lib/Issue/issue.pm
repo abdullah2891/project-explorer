@@ -32,19 +32,20 @@ sub getIssue {
     
     $sth->execute() or die +{STATUS =>"execution failed : $sth->errstr()"}; 
     
-    my $issues = {}; 
+    my @issues = (); 
     my $ref;
 
     while($ref = $sth->fetchrow_hashref() ){
-        $issues->{ $ref->{ID} } = $ref;
+        push @issues ,  $ref;
     }
     
     $sth->finish;
     $dbh->disconnect();
     
-    return +{STATUS => "ERROR RETURNING HASH )"} unless ('HASH' eq ref $issues); 
+    return +{STATUS => "ERROR RETURNING HASH )"} 
+                unless ('ARRAY' eq ref \@issues); 
     
-    return +{STATUS => 'OK' , "Issue" => $issues}; 
+    return \@issues; 
     
 }
 
@@ -55,7 +56,7 @@ sub addIssue{
 
     return {STATUS=>"ERROR:MISSING DATABASE HANDLER"} unless (defined $dbh);
     
-    my $sth = $dbh->prepare("INSERT INTO Issue (title, owner, description, status) VALUES (?,?,?,?)"); 
+    my $sth = $dbh->prepare("INSERT INTO Issue (id, title, owner, description, status) VALUES (?,?,?,?)"); 
 
     $sth->execute($arg{title},$arg{owner}, $arg{description}, $arg{status}) 
                              or return +{STATUS =>"Execution failed : $sth->errstr()"};

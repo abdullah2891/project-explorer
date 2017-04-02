@@ -20,7 +20,7 @@ sub get_issue {
   
   my $issue = Issue::issue->getIssue($dbh); 
   $self->res->headers->header('Access-Control-Allow-Origin' => '*');
-  $self->render(json=>{status=>'OK', response=>$issue});
+  $self->render(json=>{status=>'OK', issue => $issue});
 
 }
 
