@@ -11,7 +11,17 @@ sub welcome {
   $self->render(msg => 'Welcome to the Mojolicious real-time web framework!');
 }
 
+sub custom_header{
+  my $self = shift; 
+  print Dumper("custom header rerouted");
+  $self->req->headers->header('Access-Control-Allow-Origin' => 'https://ember-workspace-abdullah2891.c9users.io');
+  $self->res->headers->header('Access-Control-Allow-Origin' => 'https://ember-workspace-abdullah2891.c9users.io');
+  $self->res->headers->header('Access-Control-Allow-Headers' => 'Content-Type, X-CSRF-Token');
 
+  
+  $self->respond_to(any => { data => '', status => 200 });
+
+}
 
 sub get_issue {
   my $self = shift; 
@@ -26,6 +36,8 @@ sub get_issue {
 
 sub post_issue{
   my $self = shift; 
+  
+  print Dumper("posting issue");
   
   my $request = $self->req->json;
   

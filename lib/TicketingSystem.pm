@@ -13,6 +13,7 @@ sub startup {
   
   
   # Normal route to controller
+  $r->options('*')->to('example#custom_header');
   $r->get('/')->to('example#welcome');
   $r->get('/issues')->to('example#get_issue');
   $r->post('/issues')->to('example#post_issue');
