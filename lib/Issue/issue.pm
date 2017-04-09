@@ -56,9 +56,9 @@ sub addIssue{
 
     return {STATUS=>"ERROR:MISSING DATABASE HANDLER"} unless (defined $dbh);
     
-    my $sth = $dbh->prepare("INSERT INTO Issue (id, title, owner, description, status) VALUES (?,?,?,?)"); 
+    my $sth = $dbh->prepare("INSERT INTO Issue (title, owner, description, status) VALUES (?,?,?,?)"); 
 
-    $sth->execute($arg{title},$arg{owner}, $arg{description}, $arg{status}) 
+    $sth->execute($arg{issue}{title},$arg{issue}{owner}, $arg{issue}{description}, $arg{issue}{status}) 
                              or return +{STATUS =>"Execution failed : $sth->errstr()"};
     
     $sth->finish; 
