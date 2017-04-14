@@ -23,14 +23,18 @@ sub connect {
 
 
 sub getIssue {
-    my ($self, $dbh) = @_ ;
+    my ($self, $dbh, $id) = @_ ;
     # my $dbh = shift;
 
     return +{STATUS=>"ERROR:MISSING DATABASE HANDLER"} unless (defined $dbh);
+    my $sql_statement = "SELECT * FROM Issue" ; 
     
-    my $sth = $dbh->prepare("SELECT * FROM Issue"); 
+    $sql_statement .= " WHERE id  = ?" if ($id); 
+    print Dumper($sql_statement);
     
-    $sth->execute() or die +{STATUS =>"execution failed : $sth->errstr()"}; 
+    my $sth = $dbh->prepare($sql_statement); 
+    
+    $id ? $sth->execute($id) :  $sth->execute()  or die +{STATUS =>"execution failed : $sth->errstr()"}; 
     
     my @issues = (); 
     my $ref;

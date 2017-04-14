@@ -16,6 +16,7 @@ sub startup {
   $r->options('*')->to('example#custom_header');
   $r->get('/')->to('example#welcome');
   $r->get('/issues')->to('example#get_issue');
+  $r->get('/issues/:id')->to('example#get_issue');
   $r->post('/issues')->to('example#post_issue');
   $r->put('/issues')->to('example#update_status');
 }

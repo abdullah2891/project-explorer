@@ -26,9 +26,13 @@ sub custom_header{
 sub get_issue {
   my $self = shift; 
   
+  my $id = $self->stash('id'); 
+  print Dumper($id); 
+  
+  
   my $dbh = Issue::issue->connect('ticketSystem');
   
-  my $issue = Issue::issue->getIssue($dbh); 
+  my $issue = Issue::issue->getIssue($dbh, $id); 
   $self->res->headers->header('Access-Control-Allow-Origin' => '*');
   $self->render(json=>{status=>'OK', issue => $issue});
 
