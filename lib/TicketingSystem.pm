@@ -18,7 +18,7 @@ sub startup {
   $r->get('/issues')->to('example#get_issue');
   $r->get('/issues/:id')->to('example#get_issue');
   $r->post('/issues')->to('example#post_issue');
-  $r->put('/issues')->to('example#update_status');
+  $r->put('/issues/:id')->to('example#update_status');
 }
 
 1;
